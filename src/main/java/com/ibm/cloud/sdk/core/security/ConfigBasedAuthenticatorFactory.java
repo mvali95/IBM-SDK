@@ -33,10 +33,20 @@ public class ConfigBasedAuthenticatorFactory {
   /**
    * Retrieves authentication configuration information for the specified cloud service,
    * and returns an Authenticator instance, or null if the configuration information could not be found.
+   * @param credentialKey the credential key used for retrieving configuration properties
+   * @return an Authenticator that reflects the properties that were found in the various config sources
+   */
+  public static Authenticator getAuthenticator(String credentialKey) {
+    return getAuthenticator(credentialKey, null);
+  }
+
+  /**
+   * Retrieves authentication configuration information for the specified cloud service,
+   * and returns an Authenticator instance, or null if the configuration information could not be found.
    * @param serviceName the name of the cloud service whose authentication information should be retrieved
    * @return an Authenticator that reflects the properties that were found in the various config sources
    */
-  public static Authenticator getAuthenticator(String serviceName) {
+  public static Authenticator getAuthenticator(String credentialKey, String vcapName) {
     Authenticator authenticator = null;
 
     // Gather authentication-related properties from all the supported config sources:

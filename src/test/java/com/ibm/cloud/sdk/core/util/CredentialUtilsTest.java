@@ -16,7 +16,6 @@ package com.ibm.cloud.sdk.core.util;
 import static com.ibm.cloud.sdk.core.test.TestUtils.getStringFromInputStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.testng.Assert.assertNotNull;
 
@@ -32,8 +31,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.ibm.cloud.sdk.core.security.Authenticator;
 import com.ibm.cloud.sdk.core.security.CloudPakForDataAuthenticator;
-import com.ibm.cloud.sdk.core.util.CredentialUtils;
-import com.ibm.cloud.sdk.core.util.EnvironmentUtils;
 
 /**
  * The Class CredentialUtilsTest.
@@ -42,15 +39,9 @@ import com.ibm.cloud.sdk.core.util.EnvironmentUtils;
 @PrepareForTest({ EnvironmentUtils.class })
 public class CredentialUtilsTest {
   private static final String ALTERNATE_CRED_FILENAME = "src/test/resources/my-credentials.env";
-  private static final String SERVICE_NAME = "personality_insights";
   private static final String VCAP_SERVICES = "vcap_services.json";
-  private static final String APIKEY = "apikey";
-  private static final String USERNAME = "username";
-  private static final String OLD_API_KEY = "api_key";
   private static final String NOT_A_USERNAME = "not-a-username";
   private static final String NOT_A_PASSWORD = "not-a-password";
-  private static final String NOT_A_FREE_USERNAME = "not-a-free-username";
-  private static final String VISUAL_RECOGNITION = "watson_vision_combined";
 
   private Map<String, String> getTestProcessEnvironment() {
     Map<String, String> env = new HashMap<>();
@@ -94,31 +85,6 @@ public class CredentialUtilsTest {
 
     PowerMockito.spy(EnvironmentUtils.class);
     PowerMockito.when(EnvironmentUtils.getenv("VCAP_SERVICES")).thenReturn(vcapServices);
-  }
-
-  @Test
-  public void testGetVcapValueWithNullOrEmptyService() {
-    setupVCAP();
-    assertNull(CredentialUtils.getVcapValue(null, APIKEY));
-    assertNull(CredentialUtils.getVcapValue("", APIKEY));
-  }
-
-  @Test
-  public void testGetVcapValueWithPlan() {
-    setupVCAP();
-    assertEquals(NOT_A_USERNAME, CredentialUtils.getVcapValue(SERVICE_NAME, USERNAME, CredentialUtils.PLAN_STANDARD));
-  }
-
-  @Test
-  public void testGetVcapValueWithoutPlan() {
-    setupVCAP();
-    assertEquals(NOT_A_PASSWORD, CredentialUtils.getVcapValue(VISUAL_RECOGNITION, OLD_API_KEY));
-  }
-
-  @Test
-  public void testGetVcapValueWithMultiplePlans() {
-    setupVCAP();
-    assertEquals(NOT_A_FREE_USERNAME, CredentialUtils.getVcapValue(SERVICE_NAME, USERNAME));
   }
 
   @Test
@@ -258,7 +224,7 @@ public class CredentialUtilsTest {
   public void testVcapCredentialsMapEmpty() {
     setupVCAP();
 
-    Map<String, String> props = CredentialUtils.getVcapCredentialsAsMap("NOT_A_SERVICE");
+    Map<String, String> props = CredentialUtils.getVcapCredentialsAsMap("NOT_A_SERVICE", "name_1");
     assertNotNull(props);
     assertTrue(props.isEmpty());
   }
@@ -267,7 +233,8 @@ public class CredentialUtilsTest {
   public void testVcapCredentialsMapBasicAuth() {
     setupVCAP();
 
-    Map<String, String> props = CredentialUtils.getVcapCredentialsAsMap("discovery");
+    // Get the first service entry for service key "discovery".
+    Map<String, String> props = CredentialUtils.getVcapCredentialsAsMap("discovery", null);
     assertNotNull(props);
     assertFalse(props.isEmpty());
     assertEquals(Authenticator.AUTHTYPE_BASIC, props.get(Authenticator.PROPNAME_AUTH_TYPE));
@@ -280,7 +247,8 @@ public class CredentialUtilsTest {
   public void testVcapCredentialsMapIAM() {
     setupVCAP();
 
-    Map<String, String> props = CredentialUtils.getVcapCredentialsAsMap("language_translator");
+    // Get the service entry named "language_translator_docs" within the "language_translator" list.
+    Map<String, String> props = CredentialUtils.getVcapCredentialsAsMap("language_translator", "language_translator_docs");
     assertNotNull(props);
     assertFalse(props.isEmpty());
     assertEquals(Authenticator.AUTHTYPE_IAM, props.get(Authenticator.PROPNAME_AUTH_TYPE));

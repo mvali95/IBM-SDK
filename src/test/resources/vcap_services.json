@@ -61,6 +61,16 @@
    ],
    "language_translator": [
       {
+         "name": "bad_name",
+         "label": "bad_label",
+         "plan": "bad plan",
+         "credentials": {
+            "apikey": "XXXXX",
+            "url": "bad url",
+            "iam_url": "bad iam url"
+         }
+      },
+      {
          "name": "language_translator_docs",
          "label": "language_translator",
          "plan": "standard",
