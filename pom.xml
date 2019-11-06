@@ -39,7 +39,7 @@
         <surefire-version>3.0.0-M3</surefire-version>
         <checkstyle-plugin-version>3.0.0</checkstyle-plugin-version>
         <findbugs-plugin-version>3.0.5</findbugs-plugin-version>
-        <findbugs-version>3.0.1</findbugs-version>
+        <findbugs-version>3.0.2</findbugs-version>
         <jacoco-plugin-version>0.8.3</jacoco-plugin-version>
         <compiler-plugin-version>3.8.0</compiler-plugin-version>
         <okhttp3-version>3.12.1</okhttp3-version>
